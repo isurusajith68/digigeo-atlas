@@ -39,3 +39,9 @@ export const useClaimVectorLayerVisibility = create((set) => ({
   setClaimVectorLayerVisibility: (claimVectorLayerVisibility) =>
     set({ claimVectorLayerVisibility }),
 }));
+
+export const useSyncPropertyLayerVisibility = create((set) => ({
+  syncPropertyLayerVisibility: true,
+  setSyncPropertyLayerVisibility: (syncPropertyLayerVisibility) =>
+    set({ syncPropertyLayerVisibility }),
+}));

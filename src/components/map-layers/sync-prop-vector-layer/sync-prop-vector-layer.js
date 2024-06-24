@@ -3,6 +3,7 @@ import { commodityMap_tbl_syncProperty_commodity_VectorLayerStyleFunction } from
 import GeoJSON from "ol/format/GeoJSON";
 import { useZustand } from "use-zustand";
 import { useLayerSyncPropLoading } from "@/store/landing-map-slice";
+import { useSyncPropertyLayerVisibility } from "@/store/layer-slice";
 
 const SyncPropVectorLayer = () => {
   const allSyncPropVectorLayerRef = useRef(null);
@@ -19,6 +20,11 @@ const SyncPropVectorLayer = () => {
   const setSyncPropLoading = useZustand(
     useLayerSyncPropLoading,
     (state) => state.setSyncPropLoading
+  );
+
+  const syncPropertyLayerVisibility = useZustand(
+    useSyncPropertyLayerVisibility,
+    (state) => state.syncPropertyLayerVisibility
   );
 
   const getSyncPropertiesGeometry = useCallback(async () => {
@@ -53,6 +59,15 @@ const SyncPropVectorLayer = () => {
       allSyncPropSourceRef?.current?.addFeatures(e);
     }
   }, [syncPropertyFeatures]);
+
+  //sync property vector layer visibility
+  useEffect(() => {
+    if (syncPropertyLayerVisibility) {
+      allSyncPropVectorLayerRef.current.setVisible(true);
+    } else {
+      allSyncPropVectorLayerRef.current.setVisible(false);
+    }
+  }, [syncPropertyLayerVisibility]);
 
   return (
     <olLayerVector

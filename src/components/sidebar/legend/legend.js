@@ -6,6 +6,7 @@ import {
   useClaimVectorLayerVisibility,
   useFeaturedLayerLableVisibility,
   useFeaturedLayerVisibility,
+  useSyncPropertyLayerVisibility,
   usetoggeleLegend,
 } from "@/store/layer-slice";
 import {
@@ -35,7 +36,14 @@ const Legend = () => {
   const { assetsLayerVisibility, setAssetsLayerVisibility } =
     useAssetsLayerVisibility();
 
+  const { syncPropertyLayerVisibility, setSyncPropertyLayerVisibility } =
+    useSyncPropertyLayerVisibility();
+
   const [featuredPropLayerToggle, setFeaturedPropLayerToggle] = useState(false);
+  const [claimVectorLayerToggle, setClaimVectorLayerToggle] = useState(false);
+  const [claimLinkLayerToggle, setClaimLinkLayerToggle] = useState(false);
+  const [assetsLayerToggle, setAssetsLayerToggle] = useState(false);
+  const [syncPropertyLayerToggle, setSyncPropertyLayerToggle] = useState(false);
 
   useEffect(() => {
     setFeaturedLayerLableVisibility(featuredLayerVisibility);
@@ -74,6 +82,44 @@ const Legend = () => {
       */}
 
       <div className=" px-5 py-2 gap-2 flex flex-col">
+        <div className="flex justify-between items-center  gap-3">
+          <div className="flex gap-2 items-center">
+            <Layers className="h-4 w-4 " />
+            <span className="text-sm">Sync Property</span>
+          </div>
+          <div className="flex gap-2 items-center">
+            {syncPropertyLayerVisibility ? (
+              <Eye
+                onClick={() =>
+                  setSyncPropertyLayerVisibility(!syncPropertyLayerVisibility)
+                }
+                className="h-4 w-4 cursor-pointer"
+              />
+            ) : (
+              <EyeOffIcon
+                onClick={() =>
+                  setSyncPropertyLayerVisibility(!syncPropertyLayerVisibility)
+                }
+                className="h-4 w-4 cursor-pointer text-gray-400"
+              />
+            )}
+            {syncPropertyLayerToggle ? (
+              <ChevronsDown
+                onClick={() =>
+                  setSyncPropertyLayerToggle(!syncPropertyLayerToggle)
+                }
+                className="h-4 w-4 cursor-pointer"
+              />
+            ) : (
+              <ChevronsRight
+                onClick={() =>
+                  setSyncPropertyLayerToggle(!syncPropertyLayerToggle)
+                }
+                className="h-4 w-4 cursor-pointer"
+              />
+            )}
+          </div>
+        </div>
         <div className="flex justify-between items-center  gap-3">
           <div className="flex gap-2 items-center">
             <Layers className="h-4 w-4 " />
@@ -167,7 +213,17 @@ const Legend = () => {
               />
             )}
 
-            <ChevronsRight className="h-4 w-4 cursor-pointer" />
+            {claimLinkLayerToggle ? (
+              <ChevronsDown
+                onClick={() => setClaimLinkLayerToggle(!claimLinkLayerToggle)}
+                className="h-4 w-4 cursor-pointer"
+              />
+            ) : (
+              <ChevronsRight
+                onClick={() => setClaimLinkLayerToggle(!claimLinkLayerToggle)}
+                className="h-4 w-4 cursor-pointer"
+              />
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center  gap-3">
@@ -188,7 +244,17 @@ const Legend = () => {
               />
             )}
 
-            <ChevronsRight className="h-4 w-4 cursor-pointer" />
+            {assetsLayerToggle ? (
+              <ChevronsDown
+                onClick={() => setAssetsLayerToggle(!assetsLayerToggle)}
+                className="h-4 w-4 cursor-pointer"
+              />
+            ) : (
+              <ChevronsRight
+                onClick={() => setAssetsLayerToggle(!assetsLayerToggle)}
+                className="h-4 w-4 cursor-pointer"
+              />
+            )}
           </div>
         </div>
         <div className="flex justify-between items-center  gap-3">
@@ -213,7 +279,21 @@ const Legend = () => {
               />
             )}
 
-            <ChevronsRight className="h-4 w-4 cursor-pointer" />
+            {claimVectorLayerToggle ? (
+              <ChevronsDown
+                onClick={() =>
+                  setClaimVectorLayerToggle(!claimVectorLayerToggle)
+                }
+                className="h-4 w-4 cursor-pointer"
+              />
+            ) : (
+              <ChevronsRight
+                onClick={() =>
+                  setClaimVectorLayerToggle(!claimVectorLayerToggle)
+                }
+                className="h-4 w-4 cursor-pointer"
+              />
+            )}
           </div>
         </div>
       </div>
