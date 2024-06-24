@@ -22,7 +22,10 @@ import {
   fPropertyVectorRendererFunc,
   fPropertyVectorRendererFunc_labels,
 } from "./fprop-styles";
-import { toast } from "sonner";
+import {
+  useFeaturedLayerLableVisibility,
+  useFeaturedLayerVisibility,
+} from "@/store/layer-slice";
 
 const FPropLayer = ({ mapRef, setfPropRenderCount, fPropRenderCount }) => {
   const fPropVectorLayerRef = useRef(null);
@@ -31,11 +34,24 @@ const FPropLayer = ({ mapRef, setfPropRenderCount, fPropRenderCount }) => {
   const fPropVectorLayerLabelRef = useRef(null);
   const [maxResolutionFProp, setmaxResolutionFProp] = useState(300);
 
-  // const { fPropertyFeatures, setFPropertyFeatures } = useFPropertyFeatures();
-
   const setFPropertyFeatures = useZustand(
     useFPropertyFeatures,
     (state) => state.setFPropertyFeatures
+  );
+
+  const setFPropertyLoadingPromise = useZustand(
+    useFPropertyLoadingPromise,
+    (state) => state.setFPropertyLoadingPromise
+  );
+
+  const featuredLayerLableVisibility = useZustand(
+    useFeaturedLayerLableVisibility,
+    (state) => state.featuredLayerLableVisibility
+  );
+
+  const featuredLayerVisibility = useZustand(
+    useFeaturedLayerVisibility,
+    (state) => state.featuredLayerVisibility
   );
 
   useEffect(() => {
@@ -43,9 +59,6 @@ const FPropLayer = ({ mapRef, setfPropRenderCount, fPropRenderCount }) => {
     style.setRenderer(fPropertyVectorRendererFunc);
 
     fPropVectorLayerRef.current?.setStyle(style);
-
-    // fPropVectorLayerRef?.current
-    //   ?.getSource()
 
     fPropSourceRef.current.on("addfeature", function (event) {
       const feature = event.feature;
@@ -58,22 +71,22 @@ const FPropLayer = ({ mapRef, setfPropRenderCount, fPropRenderCount }) => {
 
       img.src = "data:image/svg+xml;utf8," + encodeURIComponent(svgtext2);
     });
-  }, [fPropVectorLayerRef.current]);
+  }, [fPropVectorLayerRef?.current]);
 
   useEffect(() => {
     const style = new Style({});
     style.setRenderer(fPropertyVectorRendererFunc_labels);
 
     fPropVectorLayerLabelRef.current?.setStyle(style);
-  }, [fPropVectorLayerRef.current]);
+  }, []);
 
   const fPropLoaderFunc = useCallback((extent, resolution, projection) => {
+    setFPropertyLoadingPromise("loading");
     console.log("fprop-loading");
-    setFPropertyFeatures();
     const url =
       `https://atlas.ceyinfo.cloud/matlas/fprops_byextent` +
       `/${extent.join("/")}`;
-    const loadingToastId = toast.loading("Loading properties...");
+
     fetch(url, {
       method: "GET",
       mode: "cors",
@@ -97,10 +110,15 @@ const FPropLayer = ({ mapRef, setfPropRenderCount, fPropRenderCount }) => {
             fPropSourceLabelRef?.current?.addFeatures(features);
             //setfPropRenderCount((p) => p + 1);
 
-            toast.message("Properties loaded", "success", loadingToastId);
-            setFPropertyFeatures();
+            setFPropertyLoadingPromise("loaded");
+            console.log("fprop-loaded-2");
           }
+          setFPropertyLoadingPromise("loaded");
+          console.log("fprop-loaded-3");
         }
+      })
+      .catch((error) => {
+        setFPropertyLoadingPromise("error");
       });
   }, []);
 
@@ -120,17 +138,26 @@ const FPropLayer = ({ mapRef, setfPropRenderCount, fPropRenderCount }) => {
       });
 
       setFPropertyFeatures(vfObjs);
-
-      // if (vfObjs?.length > 0 && !isTabletOrMobile) {
-      //   dispatch(setIsLandingMapSideNavOpen(true));
-      // } else {
-      //   dispatch(setIsLandingMapSideNavOpen(false));
-      // }
     }
-    // else {
-    //   dispatch(setIsLandingMapSideNavOpen(false));
-    // }
   }, [fPropRenderCount]);
+
+  //lable visibility
+  useEffect(() => {
+    if (featuredLayerLableVisibility) {
+      fPropVectorLayerLabelRef.current.setVisible(true);
+    } else {
+      fPropVectorLayerLabelRef.current.setVisible(false);
+    }
+  }, [featuredLayerLableVisibility]);
+
+  //layer visibility
+  useEffect(() => {
+    if (featuredLayerVisibility) {
+      fPropVectorLayerRef.current.setVisible(true);
+    } else {
+      fPropVectorLayerRef.current.setVisible(false);
+    }
+  }, [featuredLayerVisibility]);
 
   return (
     <>
@@ -145,6 +172,7 @@ const FPropLayer = ({ mapRef, setfPropRenderCount, fPropRenderCount }) => {
           loader={fPropLoaderFunc}
         ></olSourceVector>
       </olLayerVector>
+
       <olLayerVector ref={fPropVectorLayerLabelRef}>
         <olSourceVector ref={fPropSourceLabelRef}></olSourceVector>
       </olLayerVector>

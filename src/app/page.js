@@ -45,7 +45,7 @@ export default function Home() {
     <div
       style={{
         minHeight: "calc(100dvh - 64px)",
-        minWidth: isCollapsed ? "calc(100vw - 66px)" : "calc(100vw - 194px)",
+        minWidth: isCollapsed ? "99.9vw" : "calc(100vw - 260px)",
       }}
     >
       <LandingMap />

@@ -1,3 +1,4 @@
+"use client";
 import { useCallback, useRef } from "react";
 import { styleFunctionAreaBoundary } from "./area-boundary-style";
 import { all } from "ol/loadingstrategy";

@@ -17,9 +17,13 @@ import MapLayerControlPanel from "../map-controllers/map-layer-control-panel";
 import MapCoordinatesDisplay from "../map-controllers/map-coordinates-display";
 import FPropLayer from "../map-layers/featured-props/f-prop-layer";
 import { useState } from "react";
-import { useFPropertyFeatures } from "@/store/landing-map-slice";
 import AreaBoundaryLayer from "../map-layers/area-boundary/area-boundary-layer";
 import MapLayerLoadingSpiner from "../map-controllers/map-layer-loading-toast";
+import { useFeaturedLayerVisibility } from "@/store/layer-slice";
+import VectorImageLayer from "../map-layers/claim-vector-image-layer/vector-image-layer";
+import AssetsLayer from "../map-layers/assets-layer/assets-layer";
+import SyncPropVectorLayer from "../map-layers/sync-prop-vector-layer/sync-prop-vector-layer";
+import ClaimLinkLayer from "../map-layers/claim-link-vector-layer/claim-link-layer";
 
 const LandingMap = () => {
   const DOTS_PER_INCH = 72;
@@ -30,12 +34,9 @@ const LandingMap = () => {
   const { initialCenter, setInitialCenter } = useInitialCenter();
   const { setlong, setlat } = useLatLong();
   const { zoom, setZoom } = useMapZoom();
-  const { fPropertyFeatures, setFPropertyFeatures } = useFPropertyFeatures();
-
-  console.log("fPropertyFeatures", fPropertyFeatures);
 
   const [fPropRenderCount, setfPropRenderCount] = useState(0);
-  // toast("Event has been created.");
+
   const mapRef = useRef();
   const mapViewRef = useRef();
 
@@ -100,9 +101,6 @@ const LandingMap = () => {
     });
   }, [initialCenter, isCollapsed, selectedMap, zoom]);
 
-  // console.log("fPropertyFeatures", fPropertyFeatures);
-  // console.log("fPropRenderCount", fPropRenderCount);
-
   return (
     <div className="relative">
       <MapControlPanel mapRef={mapRef} mapViewRef={mapViewRef} />
@@ -131,11 +129,17 @@ const LandingMap = () => {
             ></olSourceXYZ>
           </olLayerTile>
           <AreaBoundaryLayer />
+          <ClaimLinkLayer />
+          <VectorImageLayer />
+
           <FPropLayer
             mapRef={mapRef}
             fPropRenderCount={fPropRenderCount}
             setfPropRenderCount={setfPropRenderCount}
           />
+
+          <AssetsLayer />
+          <SyncPropVectorLayer />
         </Map>
       </div>
     </div>
